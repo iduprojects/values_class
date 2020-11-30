@@ -1,0 +1,19 @@
+{
+  "exclusive_classes":false,
+  "labels":[
+    "Housing",
+    "Education",
+    "Health",
+    "Religion",
+    "Public_transportation",
+    "Selfcare",
+    "Groceries",
+    "Finance",
+    "Domestic_services",
+    "Pets",
+    "Sports",
+    "Entertainment_and_culture",
+    "Work"
+  ],
+  "pretrained_vectors":null
+}
