@@ -1,5 +1,5 @@
-# In this module the pretrained model is applied to the cleaned data from SN, the results are further interpreted to
-# and the assumptions are made about the values of the group of people who created the analyzed texts
+# Данный модуль предназначен для классификации предварительно обработанных текстов из социальной сети и интерпретации
+# результатов  для предположения структуры ценностей группы людей, участвовавших в создании исхожных текстов
 
 import spacy
 import pandas as pd
@@ -7,74 +7,73 @@ from pandas import ExcelWriter
 import matplotlib
 import matplotlib.pyplot as plt
 
-# Import cleaned data to be analysed into a data frame
-sample_data = 'data/VK_data_cleaned.xlsx'  # Location of the cleaned texts
+# Загрузить предварительно обработанные тексты для анализа
+sample_data = 'data/VK_data_preprocessed.xlsx'
 df_sample = pd.read_excel(sample_data, sheet_name='Sheet1', header=0, index_col=False, keep_default_na=True)
 df_sample = df_sample.dropna()
 
-# Load trained
-nlp = spacy.load('C:/Practice2020/values_nlp/models/model_13_fin')
+# Загрузить обученную модель
+nlp = spacy.load('models/model_13_fin')
 
-# Delete text with less than 4 words
+# Удалить тексты, в которых менее 4х слов
 df_sample = df_sample[df_sample['Text_NORM'].str.split().apply(len) > 3]
 
-# Reduce long texts to 150 words
+# Сократить длинные тексты до 150 слов
 df_sample['Text_NORM'] = df_sample['Text_NORM'].str.split().str[:150]
 df_sample['Text_NORM'] = df_sample['Text_NORM'].str.join(' ')
 
 count_row = df_sample.shape[0]
 print('Number of rows:' + str(count_row))
 
-# Classify each text and save classification results in the lists corresponding to each of the categories
+# Классифицировать каждый текст и сохранить результаты классификации по каждой категории в список
 
-# Create a list of categories
+# Задать список категорий
 categories = ['Housing', 'Education', 'Health', 'Religion', 'Public_transportation', 'Selfcare', 'Groceries', 'Finance',
               'Domestic_services', 'Pets', 'Sports', 'Entertainment_and_culture', 'Work']
 
-# Create a list of values for each category
+# Задать пустой список для каждой категории
 cat_lists = {key:[] for key in categories}
 
-# Perform classification
+# Классифицировать тексты
 texts = df_sample['Text_NORM'].tolist()
-
 for text in texts:
-    # Apply the model to the text
+    # Применить модель к тексту
     doc = nlp(text)
-    # Interpret and save the classification results to the corresponding lists
+    # Интерпретировать результаты классификации и сохранить в соответствующий категории список
     for label, score in doc.cats.items():
         if score < 0.6:
             cat_lists[label].append(0)
         else:
             cat_lists[label].append(1)
 
-# Save the classification results
+# Сохранить результаты классификации
 df_results = pd.DataFrame.from_dict(cat_lists, orient='index').transpose()
-df_results['Text_NORM'] = texts
+df_results['Text_NORM'] = texts # Добавляется только для сохранения и последующей визуальной проверки
 
 writer_sample = ExcelWriter('data/VK_data_results_0_6.xlsx')
 df_results.to_excel(writer_sample, 'Sheet1')
 writer_sample.save()
 
-'''sample_data = 'data/VK_data_results_0_6.xlsx'  # Location of the cleaned texts
-df = pd.read_excel(sample_data, sheet_name='Sheet1', header=0, index_col=False, keep_default_na=True)'''
+#sample_data = 'data/VK_data_results_0_6.xlsx'
+#df = pd.read_excel(sample_data, sheet_name='Sheet1', header=0, index_col=False, keep_default_na=True)
 
 df_results.drop('Text_NORM', inplace=True, axis=1)
 
-# Calculate number of assumed texts under each category
+# Определить количество текстов, отнесенных к каждой из категорий
 sums = df_results.sum()
 df_sums = pd.DataFrame({'Cat': sums.index, 'Number': sums.values})
 
-# Find proportion of each category relatively to the max category
+# Рассчитать пропорцию каждой категории относительно максимально представленной категории
 max_value = df_sums['Number'].max()
 df_sums['Props'] = (df_sums['Number']/max_value) * 100
 df_sums.Props = df_sums.Props.round()
 print(df_sums)
 
-# Plot the values as proportions of the max value
+# Вывести на диаграмму значения для каждой категории пропорционально максимально представленной категории
 
-# Bar chart
+# Столбчатая диаграмма
 ax_pop = df_sums.plot(kind='bar', x='Cat', y='Props')
-ax_pop.set_title('Ценности группы МЦ Квадрат\n')
+ax_pop.set_title('Ценности группы...\n')
 mylabels = [' ']
 ax_pop.legend(labels=mylabels)
 ax_pop.set_ylabel('')
