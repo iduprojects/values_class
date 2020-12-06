@@ -6,6 +6,7 @@ import random
 from ast import literal_eval
 from pandas import ExcelWriter
 
+
 # Функция оценки модели относительно одной категории (параметр label_name)
 def evaluate(df_test_gold, label_name):
     predictions = []
@@ -120,16 +121,12 @@ with nlp_my.disable_pipes(*other_pipes):  # Обучается только text
             nlp_my.update(texts, annotations, sgd=optimizer, drop=0.2)
 
 # Сохранить модель
-#nlp_my.to_disk('models/model_13_fin')
+nlp_my.to_disk('models/model_13_fin')
 
 print('Обучение модели завершено...\n')
 
 print('Тестирование модели...')
 print('')
-
-#nlp_tr = spacy.load('models/model_13_1')
-#test_texts = 'data/annotated_test.xlsx'
-#df_test = pd.read_excel(test_texts, sheet_name='Sheet1', header=0, index_col=False, keep_default_na=True)
 
 results = []
 # Оценить модель по отдельным категориям
@@ -142,10 +139,10 @@ df_results = pd.DataFrame(results)
 print(df_results)
 print('')
 
-# SСохранить результаты
-#writer_sample = ExcelWriter('data/3_testres_5.xlsx')
-#df_results.to_excel(writer_sample, 'Sheet1')
-#writer_sample.save()
+# Сохранить результаты оценки по отдельным категориям
+writer_sample = ExcelWriter('data/3_testres.xlsx')
+df_results.to_excel(writer_sample, 'Sheet1')
+writer_sample.save()
 
 print('Оценка модели по всем категориям:')
 
@@ -167,6 +164,7 @@ precision_total = round(precision_total, 3) * 100
 recall_total = round(recall_total, 3) * 100
 f_score_total = round(f_score_total, 3) * 100
 
+# Вывести обобщенные оценки
 print('Precision:' + str(precision_total))
 print('Recall:' + str(recall_total))
 print('F-score:' + str(f_score_total))

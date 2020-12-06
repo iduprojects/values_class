@@ -46,7 +46,7 @@ def structure(df_texts, nlp): # df_texts - исходные тексты, nlp - 
 
     # Определить количество текстов, отнесенных к каждой из категорий
     sums = df_results.sum()
-    df_structure = pd.DataFrame({'Cat': sums.index, 'Number': sums.values})
+    df_structure = pd.DataFrame({'Category': sums.index, 'Number': sums.values})
 
     # Рассчитать пропорцию категорий относительно максимально представленной для получения структуры значимостей
     max_value = df_structure['Number'].max()
@@ -73,8 +73,8 @@ results.to_excel(writer, 'Sheet1')
 writer.save()
 
 # Визуализировать структуру значимостей в виде столбчатой диаграммы
-ax_pop = results.plot(kind='bar', x='Cat', y='Proportion')
-ax_pop.set_title('Структура значимостей группы...\n')
+ax_pop = results.plot(kind='bar', x='Category', y='Proportion')
+ax_pop.set_title('Структура значимостей группы МЦ Квадрат\n')
 mylabels = [' ']
 ax_pop.legend(labels=mylabels)
 ax_pop.set_ylabel('')
