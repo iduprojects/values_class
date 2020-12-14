@@ -61,7 +61,7 @@ categories = ['Housing', 'Education', 'Health', 'Religion', 'Public_transportati
 nlp_my = spacy.load('spacy-ru/ru2')
 
 # Загрузить обучающую выборку
-train_texts = 'data/1_Big_annotated_shuffled.xlsx'
+train_texts = 'data/1_annotated_shuffled.xlsx'
 df_training = pd.read_excel(train_texts, sheet_name='Sheet1', header=0, index_col=False, keep_default_na=True)
 df_training.round({'Housing': 0, 'Education': 0, 'Health': 0, 'Religion': 0, 'Public_transportation': 0, 'Domestic_services': 0,
                     'Selfcare': 0, 'Groceries': 0, 'Finance': 0, 'Pets': 0, 'Sports': 0, 'Entertainment_and_culture': 0, 'Work': 0})
